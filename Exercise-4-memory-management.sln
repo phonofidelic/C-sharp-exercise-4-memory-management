@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36705.20 d17.14
+VisualStudioVersion = 17.14.36705.20
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exercise-4-memory-management", "SkalProj_Datastrukturer_Minne\Exercise-4-memory-management.csproj", "{206D12C7-16E2-4FFE-B27F-4C5616E23A55}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exercise-4-memory-management", "Exercise-4-memory-management\Exercise-4-memory-management.csproj", "{811AF5C6-F57C-3509-B057-3F084E9E86BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{206D12C7-16E2-4FFE-B27F-4C5616E23A55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{206D12C7-16E2-4FFE-B27F-4C5616E23A55}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{206D12C7-16E2-4FFE-B27F-4C5616E23A55}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{206D12C7-16E2-4FFE-B27F-4C5616E23A55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{811AF5C6-F57C-3509-B057-3F084E9E86BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{811AF5C6-F57C-3509-B057-3F084E9E86BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{811AF5C6-F57C-3509-B057-3F084E9E86BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{811AF5C6-F57C-3509-B057-3F084E9E86BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
