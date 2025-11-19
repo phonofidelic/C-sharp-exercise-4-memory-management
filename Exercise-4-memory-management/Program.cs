@@ -57,10 +57,6 @@ namespace MemoryManagement
             }
         }
 
-        
-        
-
-
         /// <summary>
         /// Examines the datastructure Queue
         /// </summary>
