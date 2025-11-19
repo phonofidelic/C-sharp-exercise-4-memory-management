@@ -81,6 +81,40 @@ namespace MemoryManagement
             Console.WriteLine(message);
             Console.ReadKey();
         }
+        public static void LoopUntilExit(Func<ProgramStatus> action)
+        {
+            ProgramStatus programStatus;
+            do
+            {
+                programStatus = action();
+                if (programStatus.Exception != null)
+                {
+                    Clear();
+                    WriteException(new("\nUnhandled error:"));
+                    WriteException(programStatus.Exception);
+                    ContinueWithKeyPress(intercept: true);
+                    Clear();
+                }
+            } while (programStatus.Code > 0);
+        }
     }
 
+
+    public class ProgramStatus
+    {
+        public int Code { get; private set; }
+        public Exception? Exception { get; private set; }
+
+        public ProgramStatus(int code, Exception exception)
+        {
+            Code = code;
+            Exception = exception;
+        }
+
+        public ProgramStatus(int code)
+        {
+            Code = code;
+            Exception = null;
+        }
+    } 
 }

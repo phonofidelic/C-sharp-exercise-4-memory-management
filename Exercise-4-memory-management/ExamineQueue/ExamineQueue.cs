@@ -1,5 +1,12 @@
+using System.Runtime.Serialization;
+
 namespace MemoryManagement
 {
+    public class InvalidExamineQueueOperationException(string operation) : Exception
+    {
+        private static string BaseMessage { get; }= "'{0}' is not a valid operation.\nPlease enter '+' or '-', then the data you would like to add or remove.\n";
+        public override string Message { get; } = string.Format(BaseMessage, operation);
+    }
     /// <summary>
     /// Examines the datastructure Queue
     /// </summary>
@@ -8,7 +15,7 @@ namespace MemoryManagement
         public static void Init()
         {
             Queue<string> queue = [];
-            LoopUntilExit(() => Run(queue));
+            Utils.LoopUntilExit(() => Run(queue));
         }
         
         public static ProgramStatus Run(Queue<string> queue)
@@ -25,7 +32,7 @@ namespace MemoryManagement
             */
             string input;
             char operationInput;
-            Exception? examineQueueException;
+            InvalidExamineQueueOperationException? examineQueueException;
             Operation? operation = null;
 
             Console.Clear();
@@ -47,7 +54,7 @@ namespace MemoryManagement
                     break;
                 } 
 
-                examineQueueException = new Exception($"'{operationInput}' is not a valid operation.\nPlease enter '+' or '-', then the data you would like to add or remove.\n");
+                examineQueueException = new InvalidExamineQueueOperationException(operationInput.ToString());
 
                 Console.Clear();
                 DisplayProgramIntro();
@@ -63,7 +70,6 @@ namespace MemoryManagement
                     input = " ";
 
                 operationInput = input[0];
-                Console.WriteLine($"ExamineQueue input: {input}");
             } while(operation == null);
 
             string value = input[1..] ?? " ";
@@ -72,7 +78,6 @@ namespace MemoryManagement
 
             try
             {
-
                 switch (operation)
                 {
                     case Operation.Exit:
@@ -100,12 +105,11 @@ namespace MemoryManagement
                         Utils.WriteLine();
                         break;
                     default:
-                        throw new Exception($"'{operationInput}' is not a valid operation.\nPlease enter '+' or '-', then the data you would like to add or remove.\n");
+                        throw new InvalidExamineQueueOperationException(operationInput.ToString());
                 }
             } catch(Exception ex)
             {
-                examineQueueException = ex;
-                return new(-1, examineQueueException);
+                return new(-1, ex);
             }
 
             Utils.ContinueWithKeyPress(intercept: true);
@@ -121,43 +125,9 @@ namespace MemoryManagement
 
         private static void DisplayProgramIntro()
         {
-            Console.WriteLine("Enter '+' or '-', then the data you would like to add or remove.");
-            Console.WriteLine("Enter 'Q' to exit.\n");
-        }
-
-        static void LoopUntilExit(Func<ProgramStatus> action)
-        {
-            ProgramStatus programStatus;
-            do
-            {
-                programStatus = action();
-                if (programStatus.Exception != null)
-                {
-                    Utils.Clear();
-                    Utils.WriteException(new("\nUnhandled error:"));
-                    Utils.WriteException(programStatus.Exception);
-                    Utils.ContinueWithKeyPress(intercept: true);
-                    Utils.Clear();
-                }
-            } while (programStatus.Code > 0);
+            Utils.WriteLine("Enter '+', then the data you would like to add to the queue.");
+            Utils.WriteLine("Enter '-' to retrieve the first item in the queue.");
+            Utils.WriteLine("\nEnter 'Q' to exit.\n");
         }
     }
-
-    public class ProgramStatus
-    {
-        public int Code { get; private set; }
-        public Exception? Exception { get; private set; }
-
-        public ProgramStatus(int code, Exception exception)
-        {
-            Code = code;
-            Exception = exception;
-        }
-
-        public ProgramStatus(int code)
-        {
-            Code = code;
-            Exception = null;
-        }
-    } 
 }
