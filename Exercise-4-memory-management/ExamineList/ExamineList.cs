@@ -8,6 +8,7 @@ public static class ExamineList
     /// Examines the datastructure List
     /// </summary>
     public static void Run()
+    // public static void Run(string? input)
     {
             /*
              * Loop this method until the user inputs something to exit to main menu.
@@ -36,21 +37,25 @@ public static class ExamineList
                     capacityIncreaseIndexes.Add(loopIndex);
                 }
 
-                DebugListCapacity(theList, capacityIncreaseIndexes);
-                PrintListCapacityIntro();
-
                 if (examineListException != null)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine(examineListException.Message);
                     Console.ResetColor();
-                }   
+                }  else
+                {
+                    Console.WriteLine("\n\n");
+                }
+
+                DebugListCapacity(theList, capacityIncreaseIndexes);
+
+                PrintListCapacityIntro();
+                string input = Console.ReadLine() ?? "";
                 
                 // Normalize empty operator to a space character to trigger the error message
-                string input = Console.ReadLine() ?? "";
-                if (input.Length == 0)
+                if (input == null || input.Length == 0)
                     input = " ";
-
+                
                 // Normalize empty input to a space character
                 char nav = input[0];
                 string value = input[1..] ?? " ";
@@ -70,7 +75,7 @@ public static class ExamineList
                         // Print the current list and highlight each item where the Capacity increases.
                         DebugListCapacity(theList, capacityIncreaseIndexes);
                         PrintListCapacityIntro();
-                        Console.WriteLine($"Adding '{value}' to the list...");
+                        PrintDebug($"Adding '{value}' to the list...");
                         theList.Add(value);
                         loopIndex++;
                         break;
@@ -80,7 +85,7 @@ public static class ExamineList
                         // The Capacity remains the same when removing items from the List.
                         DebugListCapacity(theList, capacityIncreaseIndexes);
                         PrintListCapacityIntro();
-                        Console.WriteLine($"Removing '{value}' from the list...");
+                        PrintDebug($"Removing '{value}' from the list...");
                         theList.Remove(value); 
                         loopIndex++;
                         break;
@@ -163,5 +168,6 @@ public static class ExamineList
     {
         Console.ForegroundColor = ConsoleColor.Cyan;
         Console.Write(content);
+        Console.ResetColor();
     }
 }
