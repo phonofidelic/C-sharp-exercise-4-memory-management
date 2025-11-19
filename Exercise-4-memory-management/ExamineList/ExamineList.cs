@@ -49,7 +49,7 @@ public static class ExamineList
 
                 DebugListCapacity(theList, capacityIncreaseIndexes);
 
-                PrintListCapacityIntro();
+                DisplayProgramIntro();
                 string input = Console.ReadLine() ?? "";
                 
                 // Normalize empty operator to a space character to trigger the error message
@@ -74,7 +74,7 @@ public static class ExamineList
                         Console.Clear();
                         // Print the current list and highlight each item where the Capacity increases.
                         DebugListCapacity(theList, capacityIncreaseIndexes);
-                        PrintListCapacityIntro();
+                        DisplayProgramIntro();
                         PrintDebug($"Adding '{value}' to the list...");
                         theList.Add(value);
                         loopIndex++;
@@ -84,7 +84,7 @@ public static class ExamineList
                         Console.Clear();
                         // The Capacity remains the same when removing items from the List.
                         DebugListCapacity(theList, capacityIncreaseIndexes);
-                        PrintListCapacityIntro();
+                        DisplayProgramIntro();
                         PrintDebug($"Removing '{value}' from the list...");
                         theList.Remove(value); 
                         loopIndex++;
@@ -105,7 +105,7 @@ public static class ExamineList
             Console.Clear();
             Program.Main();        
     }
-    private static void PrintListCapacityIntro()
+    private static void DisplayProgramIntro()
     {
         Console.WriteLine("Enter '+' or '-', then the data you would like to add or remove.");
         Console.WriteLine("Enter 'Q' to exit.\n");

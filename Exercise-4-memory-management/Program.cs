@@ -36,7 +36,7 @@ namespace MemoryManagement
                         ExamineList.Run();
                         break;
                     case '2':
-                        LoopUntilExit(ExamineQueue.Run);
+                        ExamineQueue.Init();
                         break;
                     case '3':
                         ExamineStack();
@@ -56,15 +56,6 @@ namespace MemoryManagement
                         break;
                 }
             }
-        }
-
-        static void LoopUntilExit(Func<int> action)
-        {
-            int programStatus;
-            do
-            {
-                programStatus = action();
-            } while (programStatus > 0);
         }
 
         /// <summary>

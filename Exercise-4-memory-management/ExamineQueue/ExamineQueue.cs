@@ -1,97 +1,168 @@
-using System;
-
-namespace MemoryManagement;
-
-public static class ExamineQueue
+namespace MemoryManagement
 {
-    /// <summary>
-    /// Examines the datastructure Queue
-    /// </summary>
-    public static int Run()
+    public static class ExamineQueue
     {
-        Dictionary<char, Operation> commands = [];
-        commands.Add('q', Operation.Exit);
-        commands.Add('Q', Operation.Exit);
-        commands.Add('+', Operation.Enqueue);
-        commands.Add('-', Operation.Dequeue);
-        /*
+        public static void Init()
+        {
+            Queue<string> queue = [];
+            LoopUntilExit(() => Run(queue));
+        }
+        /// <summary>
+        /// Examines the datastructure Queue
+        /// </summary>
+        /// 
+        public static ProgramStatus Run(Queue<string> queue)
+        {
+            Dictionary<char, Operation> commands = [];
+            commands.Add('q', Operation.Exit);
+            commands.Add('Q', Operation.Exit);
+            commands.Add('+', Operation.Enqueue);
+            commands.Add('-', Operation.Dequeue);
+            /*
             * Loop this method until the user inputs something to exit to main menu.
             * Create a switch with cases to enqueue items or dequeue items
             * Make sure to look at the queue after Enqueueing and Dequeueing to see how it behaves
-        */
-        string input;
-        char operationInput;
-        Exception? examineQueueException;
-        Operation? operation = null;
-
-        Console.Clear();
-        Console.WriteLine("Enter '+' or '-', then the data you would like to add or remove.");
-        Console.WriteLine("Enter 'Q' to exit.\n");
-
-        input = Console.ReadLine() ?? "";
-        operationInput = input[0];
-        
-        do
-        {
-            if (commands.TryGetValue(operationInput, out Operation validOperation))
-            {
-                operation = validOperation;
-                break;
-            } 
-
-            examineQueueException = new Exception($"\n'{operationInput}' is not a valid operation.\nPlease enter '+' or '-', then the data you would like to add or remove.\n");
+            */
+            string input;
+            char operationInput;
+            Exception? examineQueueException;
+            Operation? operation = null;
+            //Queue<string> queue = [];
 
             Console.Clear();
-            Console.WriteLine("Enter '+' or '-', then the data you would like to add or remove.");
-            Console.WriteLine("Enter 'Q' to exit.\n");
+            DisplayProgramIntro();
+            Utils.DisplayDatatypeInfo(queue);
 
-            if (examineQueueException != null)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(examineQueueException.Message);
-                Console.ResetColor();
-            }
+            // Normalize empty operator to a space character to trigger the error message
             input = Console.ReadLine() ?? "";
-            
-            Console.WriteLine($"ExamineQueue input: {input}");
+            if (input == null || input.Length == 0)
+                input = " ";
 
             operationInput = input[0];
-        } while(operation == null);
         
-        string value = input[1..];
+            do
+            {
+                if (commands.TryGetValue(operationInput, out Operation validOperation))
+                {
+                    operation = validOperation;
+                    break;
+                } 
 
-        Console.Clear();
-        Console.WriteLine("Enter '+' or '-', then the data you would like to add or remove.");
-        Console.WriteLine("Enter 'Q' to exit.\n");
-        Console.WriteLine("\n\n");
+                examineQueueException = new Exception($"'{operationInput}' is not a valid operation.\nPlease enter '+' or '-', then the data you would like to add or remove.\n");
 
-        switch (operation)
-        {
-            case Operation.Exit:
                 Console.Clear();
-                return 0;
+                DisplayProgramIntro();
 
-            case Operation.Enqueue:
-                Console.WriteLine("\nENQUEUE");
-                break;
+                if (examineQueueException != null)
+                {
+                    Utils.WriteException(examineQueueException);
+                }
 
-            case Operation.Dequeue:
-                Console.WriteLine("\nDEQUEUE");
-                break;
-            default:
-                examineQueueException = new Exception($"\n'{operationInput}' is not a valid operation.\nPlease enter '+' or '-', then the data you would like to add or remove.\n");
-                break;
+                Utils.DisplayDatatypeInfo(queue);
+                input = Console.ReadLine() ?? "";
+                if (input == null || input.Length == 0)
+                    input = " ";
+
+                operationInput = input[0];
+                Console.WriteLine($"ExamineQueue input: {input}");
+            } while(operation == null);
+
+            string value = input[1..] ?? " ";
+            if (value.Length == 0)
+                value = " ";
+
+            Console.Clear();
+            DisplayProgramIntro();
+            Console.WriteLine("\n\n\n");
+            Utils.DisplayDatatypeInfo(queue);
+
+            try
+            {
+
+                switch (operation)
+                {
+                    case Operation.Exit:
+                        Console.Clear();
+                        return new(0);
+
+                    case Operation.Enqueue:
+                        Console.Clear();
+                        queue.Enqueue(value);
+                        DisplayProgramIntro();
+                        Utils.DisplayDatatypeInfo(queue);
+                        Utils.WriteDebug("\n\nEnqueued: ");
+                        Utils.Write(value);
+                
+                        break;
+
+                    case Operation.Dequeue:
+                        Console.Clear();
+                        DisplayProgramIntro();
+                        Utils.DisplayDatatypeInfo(queue);
+                        var dequeuedValue = queue.Dequeue();
+                        Utils.WriteDebug("\n\nDequeued: ");
+                        Utils.Write(dequeuedValue);
+                        break;
+                    default:
+                        throw new Exception($"'{operationInput}' is not a valid operation.\nPlease enter '+' or '-', then the data you would like to add or remove.\n");
+                }
+            } catch(Exception ex)
+            {
+                examineQueueException = ex;
+                return new(-1, examineQueueException);
+            }
+
+            Console.WriteLine("\nPress any key to continue");
+            Console.ReadKey(intercept: true);
+        
+            return new(1);
+        }
+        enum Operation
+        {
+            Exit,
+            Enqueue,
+            Dequeue
+        };
+
+        private static void DisplayProgramIntro()
+        {
+            Console.WriteLine("Enter '+' or '-', then the data you would like to add or remove.");
+            Console.WriteLine("Enter 'Q' to exit.\n");
         }
 
-        Console.WriteLine("\nPress any key to continue");
-        Console.ReadKey(intercept: true);
-        
-        return 1;
+        static void LoopUntilExit(Func<ProgramStatus> action)
+        {
+            ProgramStatus programStatus;
+            do
+            {
+                programStatus = action();
+                if (programStatus.Exception != null)
+                {
+                    Utils.Clear();
+                    Utils.WriteException(new("\nUnhandled error:"));
+                    Utils.WriteException(programStatus.Exception);
+                    Utils.ContinueWithKeyPress(intercept: true);
+                    Utils.Clear();
+                }
+            } while (programStatus.Code > 0);
+        }
     }
-    enum Operation
+
+    public class ProgramStatus
     {
-        Exit,
-        Enqueue,
-        Dequeue
-    };
+        public int Code { get; private set; }
+        public Exception? Exception { get; private set; }
+
+        public ProgramStatus(int code, Exception exception)
+        {
+            Code = code;
+            Exception = exception;
+        }
+
+        public ProgramStatus(int code)
+        {
+            Code = code;
+            Exception = null;
+        }
+    } 
 }
