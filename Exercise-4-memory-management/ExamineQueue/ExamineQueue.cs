@@ -1,5 +1,8 @@
 namespace MemoryManagement
 {
+    /// <summary>
+    /// Examines the datastructure Queue
+    /// </summary>
     public static class ExamineQueue
     {
         public static void Init()
@@ -7,10 +10,7 @@ namespace MemoryManagement
             Queue<string> queue = [];
             LoopUntilExit(() => Run(queue));
         }
-        /// <summary>
-        /// Examines the datastructure Queue
-        /// </summary>
-        /// 
+        
         public static ProgramStatus Run(Queue<string> queue)
         {
             Dictionary<char, Operation> commands = [];
@@ -27,11 +27,10 @@ namespace MemoryManagement
             char operationInput;
             Exception? examineQueueException;
             Operation? operation = null;
-            //Queue<string> queue = [];
 
             Console.Clear();
             DisplayProgramIntro();
-            Utils.DisplayDatatypeInfo(queue);
+            Utils.DisplayEnumerableInfo(queue);
 
             // Normalize empty operator to a space character to trigger the error message
             input = Console.ReadLine() ?? "";
@@ -58,7 +57,7 @@ namespace MemoryManagement
                     Utils.WriteException(examineQueueException);
                 }
 
-                Utils.DisplayDatatypeInfo(queue);
+                Utils.DisplayEnumerableInfo(queue);
                 input = Console.ReadLine() ?? "";
                 if (input == null || input.Length == 0)
                     input = " ";
@@ -70,11 +69,6 @@ namespace MemoryManagement
             string value = input[1..] ?? " ";
             if (value.Length == 0)
                 value = " ";
-
-            Console.Clear();
-            DisplayProgramIntro();
-            Console.WriteLine("\n\n\n");
-            Utils.DisplayDatatypeInfo(queue);
 
             try
             {
@@ -89,19 +83,21 @@ namespace MemoryManagement
                         Console.Clear();
                         queue.Enqueue(value);
                         DisplayProgramIntro();
-                        Utils.DisplayDatatypeInfo(queue);
-                        Utils.WriteDebug("\n\nEnqueued: ");
-                        Utils.Write(value);
+                        Utils.DisplayEnumerableInfo(queue);
+                        Utils.WriteInfo("\nEnqueued: ");
+                        Utils.Write($"'{value}'");
+                        Utils.WriteLine();
                 
                         break;
 
                     case Operation.Dequeue:
                         Console.Clear();
                         DisplayProgramIntro();
-                        Utils.DisplayDatatypeInfo(queue);
+                        Utils.DisplayEnumerableInfo(queue);
                         var dequeuedValue = queue.Dequeue();
-                        Utils.WriteDebug("\n\nDequeued: ");
-                        Utils.Write(dequeuedValue);
+                        Utils.WriteInfo("\nDequeued: ");
+                        Utils.Write($"'{dequeuedValue}'");
+                        Utils.WriteLine();
                         break;
                     default:
                         throw new Exception($"'{operationInput}' is not a valid operation.\nPlease enter '+' or '-', then the data you would like to add or remove.\n");
@@ -112,9 +108,8 @@ namespace MemoryManagement
                 return new(-1, examineQueueException);
             }
 
-            Console.WriteLine("\nPress any key to continue");
-            Console.ReadKey(intercept: true);
-        
+            Utils.ContinueWithKeyPress(intercept: true);
+
             return new(1);
         }
         enum Operation
