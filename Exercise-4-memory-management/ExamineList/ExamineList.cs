@@ -101,67 +101,67 @@ public static class ExamineList
             Program.Main();        
     }
     private static void PrintListCapacityIntro()
-        {
-            Console.WriteLine("Enter '+' or '-', then the data you would like to add or remove.");
-            Console.WriteLine("Enter 'Q' to exit.\n");
-        }
-        private static void DebugListCapacity(List<string> list, List<int> capacityIncreaseIndexList)
-        {
+    {
+        Console.WriteLine("Enter '+' or '-', then the data you would like to add or remove.");
+        Console.WriteLine("Enter 'Q' to exit.\n");
+    }
+    private static void DebugListCapacity(List<string> list, List<int> capacityIncreaseIndexList)
+    {
 
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write($"List: [");
-            int i = 0;
-            string separator = ", ";
-            list.ForEach((content) => {
-                if (capacityIncreaseIndexList.Contains(i)){
-                    PrintIncrease(content);
-                } else
-                {
-                    PrintContent(content);
-                }
-                if (i+1 < list.Count) {
-                    PrintDebug(separator);
-                }
-                i++;
-            });
-            PrintDebug($"]\tCapacity: {list.Capacity}");
-            PrintDebug($"\tCount: {list.Count}\n");
-            
-            // This prints a row showing the indexes where the list Capacity increases
-            Console.Write(new string(' ', "List: [".Length));
-            foreach ((string item, int index) in list.Select((item, index) => (item, index)))
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.Write($"List: [");
+        int i = 0;
+        string separator = ", ";
+        list.ForEach((content) => {
+            if (capacityIncreaseIndexList.Contains(i)){
+                PrintIncrease(content);
+            } else
             {
-                int itemWidth = item.Length;
-                int separatorWidth = separator.Length;
-                int indexWidth = index.ToString().Length;
-                if (capacityIncreaseIndexList.Contains(index))
-                {
-                    Console.Write($"{index}".PadRight(itemWidth + separatorWidth));
-                } else
-                {
-                    Console.Write(new string(' ', itemWidth).PadRight(itemWidth + separatorWidth));
-                }
+                PrintContent(content);
             }
-            Console.ResetColor();
-            Console.Write("\n\n");
-        }
-        private static void PrintContent<T>(T content)
+            if (i+1 < list.Count) {
+                PrintDebug(separator);
+            }
+            i++;
+        });
+        PrintDebug($"]\tCapacity: {list.Capacity}");
+        PrintDebug($"\tCount: {list.Count}\n");
+        
+        // This prints a row showing the indexes where the list Capacity increases
+        Console.Write(new string(' ', "List: [".Length));
+        foreach ((string item, int index) in list.Select((item, index) => (item, index)))
         {
-            Console.ResetColor();
-            Console.Write(content);
+            int itemWidth = item.Length;
+            int separatorWidth = separator.Length;
+            int indexWidth = index.ToString().Length;
+            if (capacityIncreaseIndexList.Contains(index))
+            {
+                Console.Write($"{index}".PadRight(itemWidth + separatorWidth));
+            } else
+            {
+                Console.Write(new string(' ', itemWidth).PadRight(itemWidth + separatorWidth));
+            }
         }
-        private static void PrintIncrease(string content)
-        {
-            Console.BackgroundColor = ConsoleColor.Green;
-            Console.ForegroundColor = ConsoleColor.Black;
-            if (content == " ")
-                Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write(content);
-            Console.ResetColor();
-        }
-        private static void PrintDebug<T>(T content)
-        {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write(content);
-        }
+        Console.ResetColor();
+        Console.Write("\n\n");
+    }
+    private static void PrintContent<T>(T content)
+    {
+        Console.ResetColor();
+        Console.Write(content);
+    }
+    private static void PrintIncrease(string content)
+    {
+        Console.BackgroundColor = ConsoleColor.Green;
+        Console.ForegroundColor = ConsoleColor.Black;
+        if (content == " ")
+            Console.ForegroundColor = ConsoleColor.Green;
+        Console.Write(content);
+        Console.ResetColor();
+    }
+    private static void PrintDebug<T>(T content)
+    {
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.Write(content);
+    }
 }
