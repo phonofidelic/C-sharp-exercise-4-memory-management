@@ -32,10 +32,11 @@ namespace MemoryManagement
                 switch (input)
                 {
                     case '1':
+                        // LoopUntilExit((action) => ExamineList.Run(action()));
                         ExamineList.Run();
                         break;
                     case '2':
-                        ExamineQueue();
+                        ExamineQueue.Run();
                         break;
                     case '3':
                         ExamineStack();
@@ -55,18 +56,6 @@ namespace MemoryManagement
                         break;
                 }
             }
-        }
-
-        /// <summary>
-        /// Examines the datastructure Queue
-        /// </summary>
-        static void ExamineQueue()
-        {
-            /*
-             * Loop this method untill the user inputs something to exit to main menue.
-             * Create a switch with cases to enqueue items or dequeue items
-             * Make sure to look at the queue after Enqueueing and Dequeueing to see how it behaves
-            */
         }
 
         /// <summary>
