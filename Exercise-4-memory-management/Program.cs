@@ -39,7 +39,7 @@ namespace MemoryManagement
                         ExamineQueue.Run();
                         break;
                     case '3':
-                        ExamineStack();
+                        ExamineStack.Run();
                         break;
                     case '4':
                         CheckParanthesis();
@@ -58,17 +58,7 @@ namespace MemoryManagement
             }
         }
 
-        /// <summary>
-        /// Examines the datastructure Stack
-        /// </summary>
-        static void ExamineStack()
-        {
-            /*
-             * Loop this method until the user inputs something to exit to main menue.
-             * Create a switch with cases to push or pop items
-             * Make sure to look at the stack after pushing and and poping to see how it behaves
-            */
-        }
+        
 
         static void CheckParanthesis()
         {
