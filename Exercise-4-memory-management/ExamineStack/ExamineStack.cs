@@ -1,29 +1,32 @@
-using System.Collections.Generic;
+﻿using System;
+
 
 namespace MemoryManagement
-{    
+{
     /// <summary>
-    /// Examines the datastructure Queue
+    /// Examines the datastructure Stack
     /// </summary>
-    public static class ExamineQueue
+    public static class ExamineStack
     {
-        public static void Run()
+        public static void Run() 
         {
-            Queue<string> queue = [];
+            Stack<string> stack = [];
             List<int> capacityIncreaseIndexList = [];
             int loopIndex = 0;
 
-            // Add some items to the Queue
+            
+
+            // Add some items to the Stack
             for (int i = 1; i <= 5; i++)
             {
-                queue.Enqueue($"item {i}");
+                stack.Push($"item {i}");
             }
 
             ProgramStatus programStatus;
             do
             {
                 programStatus = _run(
-                    queue,
+                    stack,
                     capacityIncreaseIndexList,
                     loopIndex
                 );
@@ -39,19 +42,19 @@ namespace MemoryManagement
                 loopIndex++;
             } while (programStatus.Code > 0);
         }
-        
+
         private static ProgramStatus _run(
-            Queue<string> queue,
+            Stack<string> stack,
             List<int> capacityIncreaseIndexList,
             int loopIndex
         )
         {
             /*
-            * Loop this method until the user inputs something to exit to main menu.
-            * Create a switch with cases to enqueue items or dequeue items
-            * Make sure to look at the queue after Enqueueing and Dequeueing to see how it behaves
+             * Loop this method until the user inputs something to exit to main menue.
+             * Create a switch with cases to push or pop items
+             * Make sure to look at the stack after pushing and and poping to see how it behaves
             */
-            if (loopIndex == queue.ToList().Capacity)
+            if (loopIndex == stack.ToList().Capacity)
             {
                 capacityIncreaseIndexList.Add(loopIndex);
             }
@@ -60,7 +63,7 @@ namespace MemoryManagement
             {
                 Console.Clear();
                 DisplayProgramIntro();
-                Utils.WriteEnumerableInfoWithExtra(queue, capacityIncreaseIndexList, () => DisplayQueueInfo(queue));
+                Utils.WriteEnumerableInfoWithExtra(stack, capacityIncreaseIndexList, () => DisplayStackInfo(stack));
             });
 
             try
@@ -73,30 +76,31 @@ namespace MemoryManagement
 
                     case Operation.Add:
                         Console.Clear();
-                        // Call Enqueue to add an item to the end of the Queue
-                        queue.Enqueue(value);
+                        // Call Push to add an item to the top of the Stack
+                        stack.Push(value);
                         DisplayProgramIntro();
-                        Utils.WriteEnumerableInfoWithExtra(queue, capacityIncreaseIndexList, () => DisplayQueueInfo(queue));
-                        Utils.WriteInfo("\nEnqueued: ");
+                        Utils.WriteEnumerableInfoWithExtra(stack, capacityIncreaseIndexList, () => DisplayStackInfo(stack));
+                        Utils.WriteInfo("\nPushed: ");
                         Utils.Write($"'{value}'");
                         Utils.WriteLine();
-                
+
                         break;
 
                     case Operation.Remove:
                         Console.Clear();
                         DisplayProgramIntro();
-                        Utils.WriteEnumerableInfoWithExtra(queue, capacityIncreaseIndexList, () => DisplayQueueInfo(queue));
-                        // Call Dequeue to remove the first item in the Queue
-                        var dequeuedValue = queue.Dequeue();
-                        Utils.WriteInfo("\nDequeued: ");
+                        Utils.WriteEnumerableInfoWithExtra(stack, capacityIncreaseIndexList, () => DisplayStackInfo(stack));
+                        // Call Pop to retrieve the item at the top of the Stack
+                        var dequeuedValue = stack.Pop();
+                        Utils.WriteInfo("\nPopped: ");
                         Utils.Write($"'{dequeuedValue}'");
                         Utils.WriteLine();
                         break;
                     default:
                         throw new InvalidOperationException(operation.ToString());
                 }
-            } catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 return new ProgramStatus(-1, ex);
             }
@@ -113,15 +117,15 @@ namespace MemoryManagement
             Utils.WriteLine("\nEnter 'Q' to exit.\n");
         }
 
-        public static void DisplayQueueInfo(Queue<string> queue)
+        public static void DisplayStackInfo(Stack<string> stack)
         {
-            if (queue.Count > 0)
+            if (stack.Count > 0)
             {
                 Utils.WriteInfo("Next in line: ");
-                Utils.Write($"{queue.Peek()}");
+                Utils.Write($"{stack.Peek()}");
 
-                Utils.WriteInfo($"\tCapacity: {queue.ToList().Capacity}");
-                Utils.WriteInfo($"\tCount: {queue.Count}");
+                Utils.WriteInfo($"\tCapacity: {stack.ToList().Capacity}");
+                Utils.WriteInfo($"\tCount: {stack.Count}");
                 Utils.WriteLine("\n");
             }
             else
@@ -130,8 +134,4 @@ namespace MemoryManagement
             }
         }
     }
-
-    
-
-    
 }

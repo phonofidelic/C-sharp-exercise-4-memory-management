@@ -8,8 +8,78 @@ using System.Threading.Tasks;
 
 namespace MemoryManagement
 {
+    public enum Operation
+    {
+        Exit,
+        Add,
+        Remove
+    };
+
+    internal class InvalidOperationException(string operation) : Exception
+    {
+        private static string BaseMessage { get; } = "'{0}' is not a valid operation.\nPlease enter '+' or '-', then the data you would like to add or remove.\n";
+        public override string Message { get; } = string.Format(BaseMessage, operation);
+    }
     internal static class Utils
     {
+        
+        public static Dictionary<char, Operation> GetCommands()
+        {
+            Dictionary<char, Operation> commands = [];
+
+            commands.Add('q', Operation.Exit);
+            commands.Add('Q', Operation.Exit);
+            commands.Add('+', Operation.Add);
+            commands.Add('-', Operation.Remove);
+
+            return commands;
+        }
+
+        private static Operation GetOperationFromCharCommand(char command)
+        {
+            return GetCommands()[command];
+        }
+
+        //public static (Operation Operation, string Value)? TryGetOperationValuePairFromReadLine(Action action)
+        public static (Operation Operation, string Value) TryGetOperationValuePairFromReadLine(Action action)
+        {
+            Dictionary<char, Operation> commands = Utils.GetCommands();
+            string? input = null;
+            string normalizedInput;
+            char operationInput = ' ';
+            //Operation operation;
+            bool isValidOperation = false;
+
+            do
+            {
+                action();
+                if (input != null && !isValidOperation)
+                    WriteException(new InvalidOperationException(operationInput.ToString()));
+                input = ReadLine() ?? " ";
+
+                // Normalize empty operator to a space character to trigger the error message
+                normalizedInput = NormalizeCommandInput(input);
+                operationInput = normalizedInput[0];
+                isValidOperation = commands.ContainsKey(operationInput);
+            } while (!isValidOperation);
+
+            string value = input[1..] ?? " ";
+            if (value.Length == 0)
+                value = " ";
+
+            return (GetOperationFromCharCommand(operationInput), value);
+        }
+
+
+        private static string NormalizeCommandInput(string? input)
+        {
+            if (input == null || input.Length == 0)
+                input = " ";
+            return input;
+        }
+
+        public static string? ReadLine() => Console.ReadLine();
+
         public static void WriteEnumerableInfo(IEnumerable<string> data, List<int> capacityIncreaseIndexList)
         {
             string listLabel = "Data: [";
@@ -61,7 +131,9 @@ namespace MemoryManagement
 
         public static void WriteLineInfo(string message)
         {
-
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine(message);
+            Console.ResetColor();
         }
 
         public static void WriteLine(string message) => Console.WriteLine(message);
