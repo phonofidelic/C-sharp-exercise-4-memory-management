@@ -3,6 +3,34 @@
 
 namespace MemoryManagement
 {
+    public class LoopCounter
+    {
+        public int Index { get ; private set;}
+
+        public LoopCounter()
+        {
+            Index = 0;
+        }
+        public LoopCounter(int initialIndex)
+        {
+            Index = initialIndex;
+        }
+
+        public int Increment()
+        {
+            return ++Index;
+        }
+
+        public int Decrement()
+        {
+            return --Index;
+        }
+
+        public int Reset()
+        {
+            return Index = 0;
+        }
+    }
     /// <summary>
     /// Examines the datastructure Stack
     /// </summary>
@@ -10,16 +38,21 @@ namespace MemoryManagement
     {
         public static void Run() 
         {
+            LoopCounter loop = new();
             Stack<string> stack = [];
             List<int> capacityIncreaseIndexList = [];
-            int loopIndex = 0;
+            int startCount = 5;
 
             
 
             // Add some items to the Stack
-            for (int i = 1; i <= 5; i++)
+            while(loop.Increment() < startCount)
             {
-                stack.Push($"item {i}");
+                stack.Push($"item {loop.Index + 1}");
+                if (loop.Index == stack.ToList().Capacity)
+                {
+                    capacityIncreaseIndexList.Add(loop.Index);
+                }
             }
 
             ProgramStatus programStatus;
@@ -28,7 +61,7 @@ namespace MemoryManagement
                 programStatus = _run(
                     stack,
                     capacityIncreaseIndexList,
-                    loopIndex
+                    loop
                 );
                 if (programStatus.Exception != null)
                 {
@@ -39,14 +72,13 @@ namespace MemoryManagement
                     Utils.Clear();
                     continue;
                 }
-                loopIndex++;
             } while (programStatus.Code > 0);
         }
 
         private static ProgramStatus _run(
             Stack<string> stack,
             List<int> capacityIncreaseIndexList,
-            int loopIndex
+            LoopCounter loop
         )
         {
             /*
@@ -54,16 +86,16 @@ namespace MemoryManagement
              * Create a switch with cases to push or pop items
              * Make sure to look at the stack after pushing and and poping to see how it behaves
             */
-            if (loopIndex == stack.ToList().Capacity)
+            if (loop.Index == stack.ToList().Capacity)
             {
-                capacityIncreaseIndexList.Add(loopIndex);
+                capacityIncreaseIndexList.Add(loop.Index);
             }
 
             (Operation operation, string value) = Utils.TryGetOperationValuePairFromReadLine(() =>
             {
                 Console.Clear();
                 DisplayProgramIntro();
-                Utils.WriteEnumerableInfoWithExtra(stack, capacityIncreaseIndexList, () => DisplayStackInfo(stack));
+                Utils.WriteEnumerableInfoWithExtra(stack, capacityIncreaseIndexList, () => DisplayStackInfo(stack, loop.Index));
             });
 
             try
@@ -78,8 +110,9 @@ namespace MemoryManagement
                         Console.Clear();
                         // Call Push to add an item to the top of the Stack
                         stack.Push(value);
+                        loop.Increment();
                         DisplayProgramIntro();
-                        Utils.WriteEnumerableInfoWithExtra(stack, capacityIncreaseIndexList, () => DisplayStackInfo(stack));
+                        Utils.WriteEnumerableInfoWithExtra(stack, capacityIncreaseIndexList, () => DisplayStackInfo(stack, loop.Index));
                         Utils.WriteInfo("\nPushed: ");
                         Utils.Write($"'{value}'");
                         Utils.WriteLine();
@@ -89,13 +122,30 @@ namespace MemoryManagement
                     case Operation.Remove:
                         Console.Clear();
                         DisplayProgramIntro();
-                        Utils.WriteEnumerableInfoWithExtra(stack, capacityIncreaseIndexList, () => DisplayStackInfo(stack));
-                        // Call Pop to retrieve the item at the top of the Stack
-                        var dequeuedValue = stack.Pop();
-                        Utils.WriteInfo("\nPopped: ");
-                        Utils.Write($"'{dequeuedValue}'");
-                        Utils.WriteLine();
-                        break;
+                        if (value.Equals("empty", StringComparison.OrdinalIgnoreCase))
+                        {
+                            // Empty the stack if the "empty" command is provided, 
+                            // and reset the loopIndex.
+                            stack.Clear();
+                            loop.Reset();
+                            Utils.WriteEnumerableInfoWithExtra(stack, capacityIncreaseIndexList, () => {
+                                Utils.WriteLineInfo("Emptying the stack...");
+                                DisplayStackInfo(stack, loop.Index);
+                            });
+                            Utils.WriteLine();
+                            capacityIncreaseIndexList.Clear();
+                            break;
+                        } else
+                        {
+                            // Call Pop to retrieve the item at the top of the Stack
+                            loop.Decrement();
+                            var popped = stack.Pop();
+                            Utils.WriteEnumerableInfoWithExtra(stack, capacityIncreaseIndexList, () => DisplayStackInfo(stack, loop.Index));
+                            Utils.WriteInfo("\nPopped: ");
+                            Utils.Write($"'{popped}'");
+                            Utils.WriteLine();
+                            break;
+                        }
                     default:
                         throw new InvalidOperationException(operation.ToString());
                 }
@@ -112,12 +162,12 @@ namespace MemoryManagement
 
         private static void DisplayProgramIntro()
         {
-            Utils.WriteLine("Enter '+', then the data you would like to add to the queue.");
-            Utils.WriteLine("Enter '-' to retrieve the first item in the queue.");
+            Utils.WriteLine("Enter '+', then the data you would like to add to the top of the Stack.");
+            Utils.WriteLine("Enter '-' to retrieve the item at the top of the Stack.");
             Utils.WriteLine("\nEnter 'Q' to exit.\n");
         }
 
-        public static void DisplayStackInfo(Stack<string> stack)
+        public static void DisplayStackInfo(Stack<string> stack, int loopIndex)
         {
             if (stack.Count > 0)
             {
@@ -126,11 +176,12 @@ namespace MemoryManagement
 
                 Utils.WriteInfo($"\tCapacity: {stack.ToList().Capacity}");
                 Utils.WriteInfo($"\tCount: {stack.Count}");
+                Utils.WriteInfo($"\tLoop index: {loopIndex}");
                 Utils.WriteLine("\n");
             }
             else
             {
-                Utils.WriteLine("The Queue is empty. Enter text to add more data.");
+                Utils.WriteLine("The Stack is empty. Enter text to add more data.");
             }
         }
     }
