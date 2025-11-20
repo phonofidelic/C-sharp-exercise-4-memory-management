@@ -1,4 +1,4 @@
-# 1. ExamineList()
+# 1. ExamineList
 
 This exercise looks at some behaviors of `List` and focuses on how the `Capacity` property of the underlying `Array` is effected when adding to or removing from the List.
 
