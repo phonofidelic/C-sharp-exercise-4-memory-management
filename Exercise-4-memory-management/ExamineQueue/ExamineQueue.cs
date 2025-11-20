@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace MemoryManagement
@@ -10,11 +11,23 @@ namespace MemoryManagement
         public static void Run()
         {
             Queue<string> queue = [];
+            List<int> capacityIncreaseIndexList = [];
+            int loopIndex = 0;
+
+            // Add some items to the Queue
+            for (int i = 1; i <= 5; i++)
+            {
+                queue.Enqueue($"item {i}");
+            }
 
             ProgramStatus programStatus;
             do
             {
-                programStatus = _run(queue);
+                programStatus = _run(
+                    queue,
+                    capacityIncreaseIndexList,
+                    loopIndex
+                );
                 if (programStatus.Exception != null)
                 {
                     Utils.Clear();
@@ -22,11 +35,17 @@ namespace MemoryManagement
                     Utils.WriteException(programStatus.Exception);
                     Utils.ContinueWithKeyPress(intercept: true);
                     Utils.Clear();
+                    continue;
                 }
+                loopIndex++;
             } while (programStatus.Code > 0);
         }
         
-        private static ProgramStatus _run(Queue<string> queue)
+        private static ProgramStatus _run(
+            Queue<string> queue,
+            List<int> capacityIncreaseIndexList,
+            int loopIndex
+        )
         {
             Dictionary<char, Operation> commands = [];
             commands.Add('q', Operation.Exit);
@@ -43,9 +62,14 @@ namespace MemoryManagement
             InvalidExamineQueueOperationException? examineQueueException;
             Operation? operation = null;
 
+            if (loopIndex == queue.ToList().Capacity)
+            {
+                capacityIncreaseIndexList.Add(loopIndex);
+            }
+
             Console.Clear();
             DisplayProgramIntro();
-            Utils.DisplayEnumerableInfo(queue);
+            Utils.WriteEnumerableInfoWithExtra(queue, capacityIncreaseIndexList, () => DisplayQueueInfo(queue));
 
             // Normalize empty operator to a space character to trigger the error message
             input = Console.ReadLine() ?? "";
@@ -72,7 +96,7 @@ namespace MemoryManagement
                     Utils.WriteException(examineQueueException);
                 }
 
-                Utils.DisplayEnumerableInfo(queue);
+                Utils.WriteEnumerableInfoWithExtra(queue, capacityIncreaseIndexList, () => DisplayQueueInfo(queue));
                 input = Console.ReadLine() ?? "";
                 if (input == null || input.Length == 0)
                     input = " ";
@@ -96,7 +120,7 @@ namespace MemoryManagement
                         Console.Clear();
                         queue.Enqueue(value);
                         DisplayProgramIntro();
-                        Utils.DisplayEnumerableInfo(queue);
+                        Utils.WriteEnumerableInfoWithExtra(queue, capacityIncreaseIndexList, () => DisplayQueueInfo(queue));
                         Utils.WriteInfo("\nEnqueued: ");
                         Utils.Write($"'{value}'");
                         Utils.WriteLine();
@@ -106,7 +130,7 @@ namespace MemoryManagement
                     case Operation.Dequeue:
                         Console.Clear();
                         DisplayProgramIntro();
-                        Utils.DisplayEnumerableInfo(queue);
+                        Utils.WriteEnumerableInfoWithExtra(queue, capacityIncreaseIndexList, () => DisplayQueueInfo(queue));
                         var dequeuedValue = queue.Dequeue();
                         Utils.WriteInfo("\nDequeued: ");
                         Utils.Write($"'{dequeuedValue}'");
@@ -137,7 +161,64 @@ namespace MemoryManagement
             Utils.WriteLine("Enter '-' to retrieve the first item in the queue.");
             Utils.WriteLine("\nEnter 'Q' to exit.\n");
         }
+
+        public static void DisplayQueueInfo(Queue<string> queue)
+        {
+            //string listLabel = "Queue: [";
+            //Utils.WriteInfo(listLabel);
+
+            //string separator = ", ";
+
+            //foreach ((var item, int index) in queue.Select((item, index) => (item, index)))
+            //{
+            //    if (capacityIncreaseIndexList.Contains(index))
+            //    {
+            //        Utils.WriteIncrease(item);
+            //    }
+            //    else
+            //    {
+            //        Utils.WriteContent(item);
+            //    }
+            //    if (index + 1 < queue.Count)
+            //        Utils.WriteInfo(separator);
+            //}
+            //Utils.WriteInfo($"]\tCapacity: {queue.ToList().Capacity}");
+            //Utils.WriteInfo($"\tCount: {queue.Count}\n");
+
+            //// This prints a row showing the indexes where the list Capacity increases
+            //Console.Write(new string(' ', listLabel.Length));
+            //foreach ((string item, int index) in queue.Select((item, index) => (item, index)))
+            //{
+            //    int itemWidth = item.Length;
+            //    int separatorWidth = separator.Length;
+            //    int indexWidth = index.ToString().Length;
+            //    if (capacityIncreaseIndexList.Contains(index))
+            //    {
+            //        Console.Write($"{index}".PadRight(itemWidth + separatorWidth));
+            //    }
+            //    else
+            //    {
+            //        Console.Write(new string(' ', itemWidth).PadRight(itemWidth + separatorWidth));
+            //    }
+            //}
+            //Utils.Write("\n\n");
+            if (queue.Count > 0)
+            {
+                Utils.WriteInfo("Next in line: ");
+                Utils.Write($"{queue.Peek()}");
+
+                Utils.WriteInfo($"\tCapacity: {queue.ToList().Capacity}");
+                Utils.WriteInfo($"\tCount: {queue.Count}");
+                Utils.WriteLine("\n");
+            }
+            else
+            {
+                Utils.WriteLine("The Queue is empty. Enter text to add more data.");
+            }
+        }
     }
+
+    
 
     public class InvalidExamineQueueOperationException(string operation) : Exception
     {

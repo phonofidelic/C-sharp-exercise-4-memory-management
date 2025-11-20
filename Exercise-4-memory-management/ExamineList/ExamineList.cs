@@ -13,14 +13,14 @@ public static class ExamineList
         // The list to examine
         List<string> theList = [];
         // Keeps track of each Capacity increase
-        List<int> capacityIncreaseIndexes = [];
+        List<int> capacityIncreaseIndexList = [];
         Exception? examineListException = null;
         int loopIndex = 0;
         do
         {
             programStatus = _run(
                 theList,
-                capacityIncreaseIndexes,
+                capacityIncreaseIndexList,
                 examineListException,
                 loopIndex
             );
@@ -66,7 +66,7 @@ public static class ExamineList
                     capacityIncreaseIndexes.Add(loopIndex);
                 }
 
-                DebugListCapacity(theList, capacityIncreaseIndexes);
+                Utils.WriteEnumerableInfo(theList, capacityIncreaseIndexes);
 
                 DisplayProgramIntro();
                 string input = Console.ReadLine() ?? "";
@@ -90,18 +90,18 @@ public static class ExamineList
                     case '+':
                         Console.Clear();
                         // Print the current list and highlight each item where the Capacity increases.
-                        DebugListCapacity(theList, capacityIncreaseIndexes);
+                        Utils.WriteEnumerableInfo(theList, capacityIncreaseIndexes);
                         DisplayProgramIntro();
-                        PrintDebug($"Adding '{value}' to the list...");
+                        Utils.WriteInfo($"Adding '{value}' to the list...");
                         theList.Add(value);
                         break;
 
                     case '-':
                         Console.Clear();
                         // The Capacity remains the same when removing items from the List.
-                        DebugListCapacity(theList, capacityIncreaseIndexes);
+                        Utils.WriteEnumerableInfo(theList, capacityIncreaseIndexes);
                         DisplayProgramIntro();
-                        PrintDebug($"Removing '{value}' from the list...");
+                        Utils.WriteInfo($"Removing '{value}' from the list...");
                         theList.Remove(value); 
                         break;
                         
@@ -121,64 +121,44 @@ public static class ExamineList
         Console.WriteLine("Enter '+' or '-', then the data you would like to add or remove.");
         Console.WriteLine("Enter 'Q' to exit.\n");
     }
-    private static void DebugListCapacity(List<string> list, List<int> capacityIncreaseIndexList)
-    {
+    //private static void DisplayListCapacityInfo(List<string> list, List<int> capacityIncreaseIndexList)
+    //{
 
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.Write($"List: [");
-        int i = 0;
-        string separator = ", ";
-        list.ForEach((content) => {
-            if (capacityIncreaseIndexList.Contains(i)){
-                PrintIncrease(content);
-            } else
-            {
-                PrintContent(content);
-            }
-            if (i+1 < list.Count) {
-                PrintDebug(separator);
-            }
-            i++;
-        });
-        PrintDebug($"]\tCapacity: {list.Capacity}");
-        PrintDebug($"\tCount: {list.Count}\n");
+    //    Console.ForegroundColor = ConsoleColor.Cyan;
+    //    Console.Write($"List: [");
+    //    int i = 0;
+    //    string separator = ", ";
+    //    list.ForEach((content) => {
+    //        if (capacityIncreaseIndexList.Contains(i)){
+    //            Utils.WriteIncrease(content);
+    //        } else
+    //        {
+    //            Utils.WriteContent(content);
+    //        }
+    //        if (i+1 < list.Count) {
+    //            Utils.WriteInfo(separator);
+    //        }
+    //        i++;
+    //    });
+    //    Utils.WriteInfo($"]\tCapacity: {list.Capacity}");
+    //    Utils.WriteInfo($"\tCount: {list.Count}\n");
         
-        // This prints a row showing the indexes where the list Capacity increases
-        Console.Write(new string(' ', "List: [".Length));
-        foreach ((string item, int index) in list.Select((item, index) => (item, index)))
-        {
-            int itemWidth = item.Length;
-            int separatorWidth = separator.Length;
-            int indexWidth = index.ToString().Length;
-            if (capacityIncreaseIndexList.Contains(index))
-            {
-                Console.Write($"{index}".PadRight(itemWidth + separatorWidth));
-            } else
-            {
-                Console.Write(new string(' ', itemWidth).PadRight(itemWidth + separatorWidth));
-            }
-        }
-        Console.ResetColor();
-        Console.Write("\n\n");
-    }
-    private static void PrintContent<T>(T content)
-    {
-        Console.ResetColor();
-        Console.Write(content);
-    }
-    private static void PrintIncrease(string content)
-    {
-        Console.BackgroundColor = ConsoleColor.Green;
-        Console.ForegroundColor = ConsoleColor.Black;
-        if (content == " ")
-            Console.ForegroundColor = ConsoleColor.Green;
-        Console.Write(content);
-        Console.ResetColor();
-    }
-    private static void PrintDebug<T>(T content)
-    {
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.Write(content);
-        Console.ResetColor();
-    }
+    //    // This prints a row showing the indexes where the list Capacity increases
+    //    Console.Write(new string(' ', "List: [".Length));
+    //    foreach ((string item, int index) in list.Select((item, index) => (item, index)))
+    //    {
+    //        int itemWidth = item.Length;
+    //        int separatorWidth = separator.Length;
+    //        int indexWidth = index.ToString().Length;
+    //        if (capacityIncreaseIndexList.Contains(index))
+    //        {
+    //            Console.Write($"{index}".PadRight(itemWidth + separatorWidth));
+    //        } else
+    //        {
+    //            Console.Write(new string(' ', itemWidth).PadRight(itemWidth + separatorWidth));
+    //        }
+    //    }
+    //    Console.ResetColor();
+    //    Console.Write("\n\n");
+    //}
 }

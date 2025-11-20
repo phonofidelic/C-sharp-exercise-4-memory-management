@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -9,20 +10,53 @@ namespace MemoryManagement
 {
     internal static class Utils
     {
-        public static void DisplayEnumerableInfo<T>(IEnumerable<T> data)
+        public static void WriteEnumerableInfo(IEnumerable<string> data, List<int> capacityIncreaseIndexList)
         {
-            WriteInfo($"{data.GetType().Name}: [");
-            
+            string listLabel = "Data: [";
+            Utils.WriteInfo(listLabel);
+
             string separator = ", ";
 
-            foreach ((T item, int index) in data.Select((item, index) => (item, index)))
+            foreach ((string item, int index) in data.Select((item, index) => (item, index)))
             {
-                WriteContent(item);
-                if (index < data.Count())
-                    WriteInfo(separator);
+                if (capacityIncreaseIndexList.Contains(index))
+                {
+                    Utils.WriteIncrease(item);
+                }
+                else
+                {
+                    Utils.WriteContent(item);
+                }
+                if (index + 1 < data.ToList().Count)
+                    Utils.WriteInfo(separator);
             }
-            WriteInfo($"]");
-            WriteLine("\n");
+            Utils.WriteInfo($"]\tCapacity: {data.ToList().Capacity}");
+            Utils.WriteInfo($"\tCount: {data.ToList().Count}\n");
+
+            // This prints a row showing the indexes where the list Capacity increases
+            Console.Write(new string(' ', listLabel.Length));
+            foreach ((string item, int index) in data.Select((item, index) => (item, index)))
+            {
+                int itemWidth = item.Length;
+                int separatorWidth = separator.Length;
+                int indexWidth = index.ToString().Length;
+                if (capacityIncreaseIndexList.Contains(index))
+                {
+                    Console.Write($"{index}".PadRight(itemWidth + separatorWidth));
+                }
+                else
+                {
+                    Console.Write(new string(' ', itemWidth).PadRight(itemWidth + separatorWidth));
+                }
+            }
+            Utils.Write("\n\n");
+        }
+
+        public static void WriteEnumerableInfoWithExtra(IEnumerable<string> data, List<int> capacityIncreaseIndexList, Action displayMessage)
+        {
+            WriteEnumerableInfo(data, capacityIncreaseIndexList);
+            displayMessage();
+
         }
 
         public static void WriteLineInfo(string message)
@@ -47,6 +81,16 @@ namespace MemoryManagement
         public static void WriteInfo(string content)
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write(content);
+            Console.ResetColor();
+        }
+
+        public static void WriteIncrease(string content)
+        {
+            Console.BackgroundColor = ConsoleColor.Green;
+            Console.ForegroundColor = ConsoleColor.Black;
+            if (content == " ")
+                Console.ForegroundColor = ConsoleColor.Green;
             Console.Write(content);
             Console.ResetColor();
         }
