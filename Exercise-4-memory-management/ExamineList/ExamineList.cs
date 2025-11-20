@@ -2,13 +2,52 @@ using System;
 
 namespace MemoryManagement;
 
+/// <summary>
+/// Examines the datastructure List
+/// </summary>
 public static class ExamineList
 {
-    /// <summary>
-    /// Examines the datastructure List
-    /// </summary>
     public static void Run()
-    // public static void Run(string? input)
+    {
+        ProgramStatus programStatus;
+        // The list to examine
+        List<string> theList = [];
+        // Keeps track of each Capacity increase
+        List<int> capacityIncreaseIndexes = [];
+        Exception? examineListException = null;
+        int loopIndex = 0;
+        do
+        {
+            programStatus = _run(
+                theList,
+                capacityIncreaseIndexes,
+                examineListException,
+                loopIndex
+            );
+            if (programStatus.Exception != null)
+
+            {
+                Utils.Clear();
+                if (programStatus.Code < 0)
+                    Utils.WriteException(new("\nUnhandled error:"));
+                Utils.WriteException(programStatus.Exception);
+                Utils.ContinueWithKeyPress(intercept: true);
+                Utils.Clear();
+                examineListException = null;
+                continue;
+            }
+            loopIndex++;
+        } while (programStatus.Code > 0);
+        Utils.Clear();
+    }
+
+    private static ProgramStatus _run
+    (
+        List<string> theList,
+        List<int> capacityIncreaseIndexes,
+        Exception? examineListException,
+        int loopIndex
+    )
     {
             /*
              * Loop this method until the user inputs something to exit to main menu.
@@ -19,32 +58,12 @@ public static class ExamineList
              * As a default case, tell them to use only + or -
              * Below you can see some inspirational code to begin working.
             */
-            List<string> theList = [];
-            
-            bool goBack = false;
-            Exception? examineListException = null;
-
-            // Keeps track of each Capacity increase
-            List<int> capacityIncreaseIndexes = [];
-            int loopIndex = 0;
-
-            do {
                 Console.Clear();
                 
                 // Track each time the list Capacity increases
                 if (loopIndex == theList.Capacity)
                 {
                     capacityIncreaseIndexes.Add(loopIndex);
-                }
-
-                if (examineListException != null)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(examineListException.Message);
-                    Console.ResetColor();
-                }  else
-                {
-                    Console.WriteLine("\n\n");
                 }
 
                 DebugListCapacity(theList, capacityIncreaseIndexes);
@@ -62,14 +81,12 @@ public static class ExamineList
                 if (value.Length == 0)
                     value = " ";
 
-                examineListException = null;
-
                 switch (nav)
                 {
                     case 'q':
                     case 'Q':
-                        goBack = true;
-                        break;
+                        return new ProgramStatus(0);
+
                     case '+':
                         Console.Clear();
                         // Print the current list and highlight each item where the Capacity increases.
@@ -77,7 +94,6 @@ public static class ExamineList
                         DisplayProgramIntro();
                         PrintDebug($"Adding '{value}' to the list...");
                         theList.Add(value);
-                        loopIndex++;
                         break;
 
                     case '-':
@@ -87,23 +103,18 @@ public static class ExamineList
                         DisplayProgramIntro();
                         PrintDebug($"Removing '{value}' from the list...");
                         theList.Remove(value); 
-                        loopIndex++;
                         break;
                         
                     default:
-                        examineListException = new Exception($"\n'{nav}' is not a valid operation.\nPlease enter '+' or '-', then the data you would like to add or remove.\n");
-                        break;
+                        return new ProgramStatus(1, new Exception($"\n'{nav}' is not a valid operation.\nPlease enter '+' or '-', then the data you would like to add or remove.\n"));
                 }
 
                 if (examineListException == null)
                 {
-                    Console.WriteLine("\nPress any key to continue");
-                    Console.ReadKey(intercept: true);
+                    Utils.ContinueWithKeyPress(intercept: true);
                 }
                 
-            } while (!goBack);
-            Console.Clear();
-            Program.Main();        
+            return new ProgramStatus(1);      
     }
     private static void DisplayProgramIntro()
     {

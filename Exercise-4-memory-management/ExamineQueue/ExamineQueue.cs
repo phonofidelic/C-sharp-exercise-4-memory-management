@@ -1,24 +1,32 @@
 using System.Runtime.Serialization;
 
 namespace MemoryManagement
-{
-    public class InvalidExamineQueueOperationException(string operation) : Exception
-    {
-        private static string BaseMessage { get; }= "'{0}' is not a valid operation.\nPlease enter '+' or '-', then the data you would like to add or remove.\n";
-        public override string Message { get; } = string.Format(BaseMessage, operation);
-    }
+{    
     /// <summary>
     /// Examines the datastructure Queue
     /// </summary>
     public static class ExamineQueue
     {
-        public static void Init()
+        public static void Run()
         {
             Queue<string> queue = [];
-            Utils.LoopUntilExit(() => Run(queue));
+
+            ProgramStatus programStatus;
+            do
+            {
+                programStatus = _run(queue);
+                if (programStatus.Exception != null)
+                {
+                    Utils.Clear();
+                    Utils.WriteException(new("\nUnhandled error:"));
+                    Utils.WriteException(programStatus.Exception);
+                    Utils.ContinueWithKeyPress(intercept: true);
+                    Utils.Clear();
+                }
+            } while (programStatus.Code > 0);
         }
         
-        public static ProgramStatus Run(Queue<string> queue)
+        private static ProgramStatus _run(Queue<string> queue)
         {
             Dictionary<char, Operation> commands = [];
             commands.Add('q', Operation.Exit);
@@ -82,7 +90,7 @@ namespace MemoryManagement
                 {
                     case Operation.Exit:
                         Console.Clear();
-                        return new(0);
+                        return new ProgramStatus(0);
 
                     case Operation.Enqueue:
                         Console.Clear();
@@ -109,12 +117,12 @@ namespace MemoryManagement
                 }
             } catch(Exception ex)
             {
-                return new(-1, ex);
+                return new ProgramStatus(-1, ex);
             }
 
             Utils.ContinueWithKeyPress(intercept: true);
 
-            return new(1);
+            return new ProgramStatus(1);
         }
         enum Operation
         {
@@ -129,5 +137,11 @@ namespace MemoryManagement
             Utils.WriteLine("Enter '-' to retrieve the first item in the queue.");
             Utils.WriteLine("\nEnter 'Q' to exit.\n");
         }
+    }
+
+    public class InvalidExamineQueueOperationException(string operation) : Exception
+    {
+        private static string BaseMessage { get; }= "'{0}' is not a valid operation.\nPlease enter '+' or '-', then the data you would like to add or remove.\n";
+        public override string Message { get; } = string.Format(BaseMessage, operation);
     }
 }

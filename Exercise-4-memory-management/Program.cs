@@ -36,7 +36,7 @@ namespace MemoryManagement
                         ExamineList.Run();
                         break;
                     case '2':
-                        ExamineQueue.Init();
+                        ExamineQueue.Run();
                         break;
                     case '3':
                         ExamineStack();
