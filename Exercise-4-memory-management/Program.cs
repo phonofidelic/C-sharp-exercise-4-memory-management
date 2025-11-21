@@ -13,21 +13,22 @@ namespace MemoryManagement
 
             while (true)
             {
-                Console.WriteLine("Please navigate through the menu by inputting the number \n(1, 2, 3 ,4, 0) of your choice"
-                    + "\n1. Examine a List"
+                Utils.Clear();
+                Utils.WriteLine("Please navigate through the menu by inputting the number \n(1, 2, 3 ,4, 0) of your choice"
+                    + "\n\n1. Examine a List"
                     + "\n2. Examine a Queue"
                     + "\n3. Examine a Stack"
                     + "\n4. CheckParenthesis"
-                    + "\n0. Exit the application");
+                    + "\n\n0. Exit the application");
                 char input = ' '; //Creates the character input to be used with the switch-case below.
                 try
                 {
-                    input = Console.ReadLine()![0]; //Tries to set input to the first char in an input line
+                    input = Utils.ReadLine()![0]; //Tries to set input to the first char in an input line
                 }
                 catch (IndexOutOfRangeException) //If the input line is empty, we ask the users for some input.
                 {
-                    Console.Clear();
-                    Console.WriteLine("Please enter some input!");
+                    Utils.Clear();
+                    Utils.WriteLine("Please enter some input!");
                 }
                 switch (input)
                 {
@@ -42,7 +43,7 @@ namespace MemoryManagement
                         ExamineStack.Run();
                         break;
                     case '4':
-                        CheckParanthesis();
+                        CheckParenthesis.Run();
                         break;
                     /*
                      * Extend the menu to include the recursive 
@@ -52,24 +53,11 @@ namespace MemoryManagement
                         Environment.Exit(0);
                         break;
                     default:
-                        Console.WriteLine("Please enter some valid input (0, 1, 2, 3, 4)");
+                        Utils.WriteError("\nPlease enter some valid input (0, 1, 2, 3, 4)");
                         break;
                 }
             }
         }
-
-        
-
-        static void CheckParanthesis()
-        {
-            /*
-             * Use this method to check if the paranthesis in a string is Correct or incorrect.
-             * Example of correct: (()), {}, [({})],  List<int> list = new List<int>() { 1, 2, 3, 4 };
-             * Example of incorrect: (()]), [), {[()}],  List<int> list = new List<int>() { 1, 2, 3, 4 );
-             */
-
-        }
-
     }
 }
 
