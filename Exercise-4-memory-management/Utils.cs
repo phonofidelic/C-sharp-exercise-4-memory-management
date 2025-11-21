@@ -167,10 +167,21 @@ namespace MemoryManagement
             Console.ResetColor();
         }
 
-        public static void WriteException(Exception exception) {
+        public static void WriteError(string message)
+        {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(exception.Message);
+            Console.Write(message);
             Console.ResetColor();
+        }
+        public static void WriteLineError(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(message);
+            Console.ResetColor();
+        }
+
+        public static void WriteException(Exception exception) {
+            WriteLineError(exception.Message);
         }
 
         public static void Clear() => Console.Clear();
